@@ -1,16 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import chromadb
-from chromadb.config import Settings
+
 app = Flask(__name__)
 CORS(app) 
 
-# 初始化 ChromaDB 客户端
-chroma_client = chromadb.Client(Settings(
-    chroma_db_impl="duckdb+parquet",
-    persist_directory="./.model" 
-))
-
+chroma_client = chromadb.PersistentClient(path="./.model")
 # 加载你的 collection
 collection = chroma_client.get_collection(name="ragger")
 
