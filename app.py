@@ -45,7 +45,12 @@ def chat():
         temperature=0.2,
     )
 
-    gpt_answer = response.choices[0].message.content
+    if response.choices:
+        gpt_answer = response.choices[0].message.content
+    else:
+        gpt_answer = "抱歉，未能生成回答。"
+    print(f"最终发送给模型的Prompt：{final_prompt}")
+    
 
     return jsonify({"answer": gpt_answer})
 
