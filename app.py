@@ -5,8 +5,11 @@ import openai
 
 app = Flask(__name__)
 CORS(app) 
-openai.api_key = "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"
-openai.api_base = "https://openrouter.ai/api/v1"
+
+gpt_client = OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key="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"
+)
 
 chroma_client = chromadb.PersistentClient(path="./.model")
 # 加载你的 collection
@@ -33,8 +36,8 @@ def chat():
 如果资料中找不到答案，请礼貌地告诉用户不知道。"""
 
     # 调用 DeepSeek大模型
-    response = openai.ChatCompletion.create(
-        model="deepseek-chat",
+    response = gpt_client.chat.completions.create(
+        model="deepseek/deepseek-v3-base:free",
         messages=[
             {"role": "system", "content": "你是一个知识问答机器人。"},
             {"role": "user", "content": final_prompt}
