@@ -6,6 +6,10 @@ from openai import OpenAI
 app = Flask(__name__)
 CORS(app) 
 
+#gpt_client = OpenAI(
+#    base_url="https://openrouter.ai/api/v1",
+#    api_key="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"
+#)
 gpt_client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
     api_key="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"
