@@ -45,7 +45,7 @@ def chat():
         temperature=0.2,
     )
 
-    gpt_answer = response["choices"][0]["message"]["content"]
+    gpt_answer = response.choices[0].message.content
 
     return jsonify({"answer": gpt_answer})
 
