@@ -17,11 +17,12 @@ collection = chroma_client.get_collection(name="ragger")
 
 def get_embedding_from_openrouter(text):
     response = gpt_client.embeddings.create(
-        model="openai/text-embedding-ada-002",  # 用通用的Embedding模型
-        input=[text]  # 注意这里是list格式！！！
+        model="deepseek-embedding",  # ✅ 这是 OpenRouter 支持的模型名
+        input=[text]
     )
     embedding = response.data[0].embedding
     return embedding
+
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
