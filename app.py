@@ -19,12 +19,17 @@ collection = chroma_client.get_collection(name="ragger")
 API_URL = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"
 headers = {"Authorization": "Bearer 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"} 
 
-def get_embedding_from_openrouter(text):
-    response = requests.post(API_URL, headers=headers, json={"inputs": text})
-    if response.status_code == 200:
-        return response.json()[0]
-    else:
-        app.logger.error(f"HuggingFace embedding失败：{response.status_code} - {response.text}")
+def get_embedding(text):
+    try:
+        response = requests.post(HF_API_URL, headers=HF_HEADERS, json={"inputs": text})
+        data = response.json()
+        if response.status_code == 200 and isinstance(data, list) and isinstance(data[0], list):
+            return data[0]
+        else:
+            app.logger.error(f"Embedding API 返回结构异常: {data}")
+            return []
+    except Exception as e:
+        app.logger.error(f"Embedding API 请求异常: {e}")
         return []
 
 
@@ -36,8 +41,13 @@ def chat():
 
     try:
         app.logger.info(f"收到提问：{user_question}")
-        query_embedding = get_embedding_from_openrouter(user_question)
-        app.logger.info(f"生成的embedding前5位：{query_embedding[:5]}")
+        query_embedding = get_embedding(user_question)
+        if not query_embedding:
+            return jsonify({"answer": "生成embedding失败"})
+
+        app.logger.info(f"embedding前5位: {query_embedding[:5]}")
+        results = collection.query(query_embeddings=[query_embedding], n_results=3)
+        documents = results.get("documents", [[]])[0]
         # 再用embedding去chroma检索
         results = collection.query(
             query_embeddings=[query_embedding],
