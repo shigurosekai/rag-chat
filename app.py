@@ -31,7 +31,7 @@ def chat():
 
     try:
         app.logger.info(f"收到提问：{user_question}")
-        query_embedding = get_embedding_from_deepseek(user_question)
+        query_embedding = get_embedding_from_openrouter(user_question)
         app.logger.info(f"生成的embedding前5位：{query_embedding[:5]}")
         # 再用embedding去chroma检索
         results = collection.query(
