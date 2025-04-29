@@ -69,7 +69,7 @@ def chat():
 {context}
 
 根据以上资料，回答用户的问题：{user_question}
-如果资料中找不到答案，请礼貌地告诉用户不知道。"""
+如果资料中找不到答案，可以自行回答或礼貌的告诉用户不知道。"""
 
     # 调用 DeepSeek大模型
         response = gpt_client.chat.completions.create(
