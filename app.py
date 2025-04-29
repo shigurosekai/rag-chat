@@ -4,10 +4,10 @@ import chromadb
 from openai import OpenAI
 import requests
 import logging
-app.logger.setLevel(logging.DEBUG)
 
 app = Flask(__name__)
 CORS(app) 
+app.logger.setLevel(logging.DEBUG)
 
 gpt_client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
