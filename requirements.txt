@@ -3,3 +3,4 @@ flask_cors
 chromadb
 openai
 requests
+logging
