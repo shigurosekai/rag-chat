@@ -30,15 +30,15 @@ def chat():
         return jsonify({"answer": "请提供问题内容！"})
 
     try:
-        print(f"收到提问：{user_question}")
+        app.logger.info(f"收到提问：{user_question}")
         query_embedding = get_embedding_from_deepseek(user_question)
-        print(f"生成的embedding前5位：{query_embedding[:5]}")
+        app.logger.info(f"生成的embedding前5位：{query_embedding[:5]}")
         # 再用embedding去chroma检索
         results = collection.query(
             query_embeddings=[query_embedding],
             n_results=3
         )
-        print(f"检索到的文档数：{len(results['documents'][0])}")
+        app.logger.info(f"检索到的文档数：{len(results['documents'][0])}")
 
         documents = results["documents"][0] if results["documents"] else []
         context = "\n".join(documents)
@@ -67,13 +67,13 @@ def chat():
             gpt_answer = response.choices[0].message.content
         else:
             gpt_answer = "抱歉，未能生成回答。"
-        print(f"最终发送给模型的Prompt：{final_prompt}")
+        app.logger.info(f"最终发送给模型的Prompt：{final_prompt}")
     
 
         return jsonify({"answer": gpt_answer})
 
     except Exception as e:
-        print("异常详细信息：", str(e))
+        app.logger.error(f"服务器异常：{str(e)}")
         return jsonify({"answer": "服务器内部错误，请稍后再试～"})
 
 if __name__ == "__main__":
