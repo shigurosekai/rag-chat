@@ -25,8 +25,9 @@ def get_embedding(text):
     try:
         response = requests.post(EMBEDDING_API_URL, headers=EMBEDDING_HEADERS, json={"inputs": text})
         data = response.json()
-        if response.status_code == 200 and isinstance(data, list) and isinstance(data[0], list):
-            return data[0]
+        app.logger.debug(f"Embedding原始返回结构: {data[:5]}")  # 输出前5位看看
+        if response.status_code == 200 and isinstance(data, list) and isinstance(data[0], float):
+            return data
         else:
             app.logger.error(f"Embedding API 返回结构异常: {data}")
             return []
