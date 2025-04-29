@@ -3,6 +3,8 @@ from flask_cors import CORS
 import chromadb
 from openai import OpenAI
 import requests
+import logging
+app.logger.setLevel(logging.DEBUG)
 
 app = Flask(__name__)
 CORS(app) 
@@ -16,12 +18,12 @@ chroma_client = chromadb.PersistentClient(path="./.model")
 # 加载你的 collection
 collection = chroma_client.get_collection(name="ragger")
 
-API_URL = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"
-headers = {"Authorization": "Bearer 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"} 
+EMBEDDING_API_URL = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"
+EMBEDDING_HEADERS = {"Authorization": "Bearer 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"} 
 
 def get_embedding(text):
     try:
-        response = requests.post(HF_API_URL, headers=HF_HEADERS, json={"inputs": text})
+        response = requests.post(EMBEDDING_API_URL, headers=EMBEDDING_HEADERS, json={"inputs": text})
         data = response.json()
         if response.status_code == 200 and isinstance(data, list) and isinstance(data[0], list):
             return data[0]
