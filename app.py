@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import chromadb
 from openai import OpenAI
+import requests
 
 app = Flask(__name__)
 CORS(app) 
@@ -15,13 +16,16 @@ chroma_client = chromadb.PersistentClient(path="./.model")
 # 加载你的 collection
 collection = chroma_client.get_collection(name="ragger")
 
+API_URL = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"
+headers = {"Authorization": "Bearer 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"} 
+
 def get_embedding_from_openrouter(text):
-    response = gpt_client.embeddings.create(
-        model="deepseek-embedding",  # ✅ 这是 OpenRouter 支持的模型名
-        input=[text]
-    )
-    embedding = response.data[0].embedding
-    return embedding
+    response = requests.post(API_URL, headers=headers, json={"inputs": text})
+    if response.status_code == 200:
+        return response.json()[0]
+    else:
+        app.logger.error(f"HuggingFace embedding失败：{response.status_code} - {response.text}")
+        return []
 
 
 @app.route('/api/chat', methods=['POST'])
