@@ -6,10 +6,6 @@ from openai import OpenAI
 app = Flask(__name__)
 CORS(app) 
 
-#gpt_client = OpenAI(
-#    base_url="https://openrouter.ai/api/v1",
-#    api_key="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"
-#)
 gpt_client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
     api_key="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"
@@ -19,10 +15,10 @@ chroma_client = chromadb.PersistentClient(path="./.model")
 # 加载你的 collection
 collection = chroma_client.get_collection(name="ragger")
 
-def get_embedding_from_deepseek(text):
+def get_embedding_from_openrouter(text):
     response = gpt_client.embeddings.create(
-        model="text-embedding-openrouter",   # OpenRouter统一用这个embedding入口
-        input=text
+        model="openai/text-embedding-ada-002",  # 用通用的Embedding模型
+        input=[text]  # 注意这里是list格式！！！
     )
     embedding = response.data[0].embedding
     return embedding
