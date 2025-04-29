@@ -30,14 +30,15 @@ def chat():
         return jsonify({"answer": "请提供问题内容！"})
 
     try:
-        # 先把用户问题变成向量
+        print(f"收到提问：{user_question}")
         query_embedding = get_embedding_from_deepseek(user_question)
-
+        print(f"生成的embedding前5位：{query_embedding[:5]}")
         # 再用embedding去chroma检索
         results = collection.query(
             query_embeddings=[query_embedding],
             n_results=3
         )
+        print(f"检索到的文档数：{len(results['documents'][0])}")
 
         documents = results["documents"][0] if results["documents"] else []
         context = "\n".join(documents)
@@ -72,7 +73,7 @@ def chat():
         return jsonify({"answer": gpt_answer})
 
     except Exception as e:
-        print("异常：", str(e))
+        print("异常详细信息：", str(e))
         return jsonify({"answer": "服务器内部错误，请稍后再试～"})
 
 if __name__ == "__main__":
