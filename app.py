@@ -24,7 +24,12 @@ EMBEDDING_HEADERS = {"Authorization": "Bearer hf_GTSJOCucXNEUhplVkDXWLvvnwxlQRqZ
 def get_embedding(text):
     try:
         response = requests.post(EMBEDDING_API_URL, headers=EMBEDDING_HEADERS, json={"inputs": text})
-        data = response.json()
+
+        try:
+            data = response.json()
+        except Exception as e:
+            app.logger.error(f"Embedding API 返回非 JSON 内容：{response.text[:200]}")
+            raise e
 
         if isinstance(data, list) and len(data) > 0 and isinstance(data[0], list):
             embedding = data[0]
