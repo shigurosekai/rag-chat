@@ -18,7 +18,7 @@ chroma_client = chromadb.PersistentClient(path="./.model")
 # 加载你的 collection
 collection = chroma_client.get_collection(name="ragger")
 
-EMBEDDING_API_URL = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"
+EMBEDDING_API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
 EMBEDDING_HEADERS = {"Authorization": "Bearer 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"} 
 
 def get_embedding(text):
