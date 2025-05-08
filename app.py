@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import chromadb
 from openai import OpenAI
+from huggingface_hub import InferenceClient
 import requests
 import logging
 
@@ -18,27 +19,17 @@ chroma_client = chromadb.PersistentClient(path="./.model")
 # 加载你的 collection
 collection = chroma_client.get_collection(name="ragger")
 
-EMBEDDING_API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
-EMBEDDING_HEADERS = {"Authorization": "Bearer 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"} 
+hf_client = InferenceClient(
+    model="sentence-transformers/all-MiniLM-L6-v2",
+    token="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"
+)
 
-def get_embedding(text):
+def get_embedding(text: str) -> list[float]:
     try:
-        response = requests.post(EMBEDDING_API_URL, headers=EMBEDDING_HEADERS, json={"inputs": text})
-
-        try:
-            data = response.json()
-        except Exception as e:
-            app.logger.error(f"Embedding API 返回非 JSON 内容：{response.text[:200]}")
-            raise e
-
-        if isinstance(data, list) and len(data) > 0 and isinstance(data[0], list):
-            embedding = data[0]
-            return embedding
-        else:
-            app.logger.error(f"Embedding API 返回结构异常: {data}")
-            return []
+        arr = hf_client.feature_extraction(text)
+        return arr[0].tolist()
     except Exception as e:
-        app.logger.error(f"Embedding API 请求异常: {e}")
+        app.logger.error(f"Hugging Face 推理失败：{e}")
         return []
 
 
