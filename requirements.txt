@@ -4,3 +4,4 @@ chromadb
 openai
 requests
 logging
+huggingface_hub
