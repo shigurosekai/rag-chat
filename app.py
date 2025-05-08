@@ -25,9 +25,16 @@ hf_client = InferenceClient(
 )
 
 def get_embedding(text: str) -> list[float]:
+    """
+    调用 Hugging Face InferenceClient 的 feature_extraction，
+    返回第一行（CLS token 或句子级别）的向量列表。
+    """
     try:
-        arr = hf_client.feature_extraction(text)
-        return arr[0].tolist()
+        # 返回 numpy.ndarray 或 List[List[float]]
+        result = hf_client.feature_extraction(text)
+        # 取第 0 行向量并转为纯 Python list
+        embedding = result[0].tolist()
+        return embedding
     except Exception as e:
         app.logger.error(f"Hugging Face 推理失败：{e}")
         return []
